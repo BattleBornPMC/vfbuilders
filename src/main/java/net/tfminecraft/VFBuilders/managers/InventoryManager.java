@@ -14,6 +14,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import org.bukkit.ChatColor;
+
 import me.Plugins.TLibs.TLibs;
 import me.Plugins.TLibs.Objects.TLibAPI;
 import me.Plugins.TLibs.Objects.API.SubAPI.ItemCreator;
@@ -34,7 +36,7 @@ import net.tfminecraft.VehicleFramework.Weapons.Weapon;
 public class InventoryManager {
     public void categoryView(Inventory i, Player p, ActiveStation s, boolean open) {
 		if(open) {
-			String title = me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter.formatHex(s.getStation().getMenuTitle());
+			String title = ChatColor.translateAlternateColorCodes('&', me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter.formatHex(s.getStation().getMenuTitle()));
 			i = VFBuilders.plugin.getServer().createInventory(new VFBHolder(s, VFBGUI.CATEGORY), 27, title);
 		}
 		// First pass: place categories with explicit slots
@@ -76,7 +78,7 @@ public class InventoryManager {
 	}
 	public void blueprintView(Inventory i, Player p, BlueprintCategory cat, ActiveStation s, boolean open) {
 		if(open) {
-			String title = me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter.formatHex(cat.getMenuTitle());
+			String title = ChatColor.translateAlternateColorCodes('&', me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter.formatHex(cat.getMenuTitle()));
 			i = VFBuilders.plugin.getServer().createInventory(new VFBHolder(s, VFBGUI.BLUEPRINT), 27, title);
 		}
 		// First pass: place blueprints with explicit slots
