@@ -32,6 +32,12 @@ public class Blueprint {
     private int time;
     private int slot;
     private HashMap<String, Integer> inputs = new HashMap<>();
+    private HashMap<String, Integer> tools = new HashMap<>();
+
+    private String craftingSound;
+    private float craftingSoundVolume;
+    private float craftingSoundPitch;
+    private int craftingSoundInterval;
 
     private String permission;
 
@@ -54,6 +60,13 @@ public class Blueprint {
         }
         time = config.getInt("time", 10);
         slot = config.getInt("slot", -1);
+        if (config.isConfigurationSection("crafting-sound")) {
+            ConfigurationSection cs = config.getConfigurationSection("crafting-sound");
+            craftingSound = cs.getString("sound", null);
+            craftingSoundVolume = (float) cs.getDouble("volume", 1.0);
+            craftingSoundPitch = (float) cs.getDouble("pitch", 1.0);
+            craftingSoundInterval = Math.max(1, cs.getInt("interval", 20));
+        }
         for(String s : config.getStringList("inputs")) {
             String input = s.split("\\s+")[0];
             Integer amount = 1;
@@ -63,6 +76,16 @@ public class Blueprint {
                 VFLogger.log(VFBuilders.plugin, s+" is not a correctly formulated input for the blueprint "+key);
             }
             inputs.put(input, amount);
+        }
+        for(String s : config.getStringList("tools")) {
+            String tool = s.split("\\s+")[0];
+            Integer amount = 1;
+            try {
+                amount = Integer.parseInt(s.split("\\s+")[1]);
+            } catch (Exception e) {
+                VFLogger.log(VFBuilders.plugin, s+" is not a correctly formulated tool for the blueprint "+key);
+            }
+            tools.put(tool, amount);
         }
         permission = config.getString("permission", null);
         vehicle = VehicleLoader.getByString(config.getString("vehicle", "none"));
@@ -104,8 +127,73 @@ public class Blueprint {
         return slot >= 0;
     }
 
+    public boolean hasCraftingSound() {
+        return craftingSound != null;
+    }
+
+    public String getCraftingSound() {
+        return craftingSound;
+    }
+
+    public float getCraftingSoundVolume() {
+        return craftingSoundVolume;
+    }
+
+    public float getCraftingSoundPitch() {
+        return craftingSoundPitch;
+    }
+
+    public int getCraftingSoundInterval() {
+        return craftingSoundInterval;
+    }
+
     public HashMap<String, Integer> getInputs() {
         return inputs;
+    }
+
+    public boolean hasTools() {
+        return !tools.isEmpty();
+    }
+
+    public HashMap<String, Integer> getTools() {
+        return tools;
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean hasRequiredTools(Player p) {
+        HashMap<String, Integer> needed = (HashMap<String, Integer>) tools.clone();
+        for(ItemStack i : p.getInventory().getContents()) {
+            if (i == null || i.getType() == Material.AIR) continue;
+            String path = api.getChecker().getAsStringPath(i);
+            if(needed.containsKey(path)) {
+                int current = needed.get(path) - i.getAmount();
+                if(current > 0) needed.put(path, current);
+                else needed.remove(path);
+            }
+            if (needed.isEmpty()) break;
+        }
+        return needed.isEmpty();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void takeTools(Player p) {
+        HashMap<String, Integer> needed = (HashMap<String, Integer>) tools.clone();
+        for (ItemStack i : p.getInventory().getContents()) {
+            if (i == null || i.getType() == Material.AIR) continue;
+            String path = api.getChecker().getAsStringPath(i);
+            if (!needed.containsKey(path)) continue;
+            int required = needed.get(path);
+            int available = i.getAmount();
+            if (available >= required) {
+                i.setAmount(available - required);
+                needed.remove(path);
+            } else {
+                i.setAmount(0);
+                needed.put(path, required - available);
+            }
+            if (needed.isEmpty()) break;
+        }
+        p.updateInventory();
     }
 
     @SuppressWarnings("unchecked")
@@ -166,13 +254,17 @@ public class Blueprint {
 
         // Drop all items
         for (Map.Entry<String, Integer> entry : inputs.entrySet()) {
-            String path = entry.getKey();
-            int amount = entry.getValue();
+            ItemStack drop = api.getCreator().getItemFromPath(entry.getKey());
+            drop.setAmount(entry.getValue());
+            loc.getWorld().dropItemNaturally(loc.clone().add(0.5, 1, 0.5), drop);
+        }
+    }
 
-            ItemStack item = api.getCreator().getItemFromPath(path);
-            item.setAmount(amount);
-
-            loc.getWorld().dropItemNaturally(loc.clone().add(0.5, 1, 0.5), item);
+    public void dropTools(Location loc) {
+        for (Map.Entry<String, Integer> entry : tools.entrySet()) {
+            ItemStack drop = api.getCreator().getItemFromPath(entry.getKey());
+            drop.setAmount(entry.getValue());
+            loc.getWorld().dropItemNaturally(loc.clone().add(0.5, 1, 0.5), drop);
         }
     }
 }

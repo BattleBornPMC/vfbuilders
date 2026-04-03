@@ -25,6 +25,7 @@ public class BlueprintCategory {
     private String permission;
     private String menuTitle;
     private boolean menuFillers;
+    private int slot;
     private ItemStack backButton;
     private int backButtonSlot;
 
@@ -46,6 +47,7 @@ public class BlueprintCategory {
         permission = config.getString("permission", null);
         menuTitle = config.getString("menu-title", "&7Select Blueprint");
         menuFillers = config.getBoolean("menu-fillers", false);
+        slot = config.getInt("slot", -1);
 
         // Back button
         Material mat = Material.BARRIER;
@@ -100,6 +102,14 @@ public class BlueprintCategory {
 
     public String getMenuTitle() {
         return menuTitle;
+    }
+
+    public boolean hasSlot() {
+        return slot != -1;
+    }
+
+    public int getSlot() {
+        return slot;
     }
 
     public boolean hasMenuFillers() {

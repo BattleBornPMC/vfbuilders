@@ -6,6 +6,7 @@
 #   station: "my_station"
 #   menu-title: "&7Select Blueprint"
 #   menu-fillers: false
+#   slot: 4                          # optional — fixed slot in the station's category menu (0-26)
 #   permission: "vfbuilders.category.my_category"  # optional
 #   item:
 #     material: IRON_BLOCK

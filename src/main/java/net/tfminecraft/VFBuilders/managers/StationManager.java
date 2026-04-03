@@ -143,7 +143,7 @@ public class StationManager implements Listener {
         id = m.getPersistentDataContainer().get(key, PersistentDataType.STRING);
         if (id != null) {
             Blueprint b = BlueprintLoader.getByString(id);
-            if (!b.hasInputs(p)) {
+            if (!b.hasInputs(p) || !b.hasRequiredTools(p)) {
                 p.sendMessage("§cLacking items");
                 p.playSound(p, Sound.ENTITY_VILLAGER_NO, 1f, 1f);
                 return;
@@ -177,19 +177,21 @@ public class StationManager implements Listener {
 
         Blueprint blueprint = placement.getBlueprint();
 
-        // Re-check if player still has the required items
-        if (!blueprint.hasInputs(p)) {
+        // Re-check if player still has the required items and tools
+        if (!blueprint.hasInputs(p) || !blueprint.hasRequiredTools(p)) {
             activePlacements.remove(uuid);
             p.sendMessage("§cYou no longer have the required items.");
             p.playSound(p, Sound.ENTITY_VILLAGER_NO, 1f, 1f);
             return;
         }
 
-        // Take the inputs and set the location
+        // Take the inputs and tools, then set the location
         blueprint.takeInputs(p);
+        if (blueprint.hasTools()) blueprint.takeTools(p);
         placement.getStation().setSpawnLocation(clickLoc);
         placement.setFinalSpawnLocation(clickLoc);
         ActiveStation station = placement.getStation();
+        if (blueprint.hasTools()) station.setCrafter(p.getUniqueId(), blueprint.getTools());
         station.selectBlueprint(blueprint);
         p.sendMessage("§aSpawn location set!");
         p.sendTitle("", "§eStarted Constructing "+blueprint.getVehicle().getName(), 10, 60, 10);
@@ -301,6 +303,7 @@ public class StationManager implements Listener {
 
         if (station.hasBlueprint()) {
             station.getBlueprint().drop(loc.clone().add(0.5, 1, 0.5));
+            station.dropPendingTools(loc);
         }
 
         station.setSpawnLocation(null); // Important to stop the particle trail

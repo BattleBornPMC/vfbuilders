@@ -1,13 +1,21 @@
 package net.tfminecraft.VFBuilders.core;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import me.Plugins.TLibs.TLibs;
 
 import me.Plugins.TLibs.Utils.TimeFormatter;
+import net.tfminecraft.VFBuilders.loaders.StationLoader;
 import net.tfminecraft.VehicleFramework.VehicleFramework;
 import net.tfminecraft.VehicleFramework.Managers.VehicleManager;
 import net.tfminecraft.VFBuilders.loaders.BlueprintLoader;
@@ -20,6 +28,9 @@ public class ActiveStation {
     private Blueprint blueprint;
     private Location loc;
     private Location spawnLoc;
+
+    private UUID crafterUUID;
+    private HashMap<String, Integer> pendingTools = new HashMap<>();
 
     private ArmorStand hologramTitle;
     private ArmorStand hologramTime;
@@ -67,11 +78,31 @@ public class ActiveStation {
         timeLeft--;
         updateHologram();
 
+        if (blueprint.hasCraftingSound()) {
+            int elapsed = blueprint.getTime() - timeLeft;
+            if (elapsed % blueprint.getCraftingSoundInterval() == 0) {
+                playCraftingSound();
+            }
+        }
+
         if (timeLeft == 0) {
             removeHolograms();
         }
 
         return timeLeft == 0;
+    }
+
+    private void playCraftingSound() {
+        if (loc.getWorld() == null) return;
+        String soundName = blueprint.getCraftingSound();
+        float volume = blueprint.getCraftingSoundVolume();
+        float pitch = blueprint.getCraftingSoundPitch();
+        try {
+            Sound sound = Sound.valueOf(soundName.toUpperCase());
+            loc.getWorld().playSound(loc, sound, volume, pitch);
+        } catch (IllegalArgumentException e) {
+            loc.getWorld().playSound(loc, soundName, volume, pitch);
+        }
     }
 
     public void complete() {
@@ -99,9 +130,28 @@ public class ActiveStation {
             center.getWorld().playSound(center, Sound.BLOCK_BEACON_ACTIVATE, 0.8f, 1.6f);
         }
 
+        returnTools(spawnLoc);
+
         // Only clear if completed
         spawnLoc = null;
         blueprint = null;
+        crafterUUID = null;
+        pendingTools.clear();
+    }
+
+    private void returnTools(Location fallbackLoc) {
+        if (pendingTools.isEmpty()) return;
+        Player crafter = crafterUUID != null ? Bukkit.getPlayer(crafterUUID) : null;
+        for (Map.Entry<String, Integer> entry : pendingTools.entrySet()) {
+            ItemStack item = TLibs.getItemAPI().getCreator().getItemFromPath(entry.getKey());
+            item.setAmount(entry.getValue());
+            if (crafter != null && crafter.isOnline()) {
+                crafter.getInventory().addItem(item).values().forEach(leftover ->
+                    crafter.getWorld().dropItemNaturally(crafter.getLocation(), leftover));
+            } else {
+                fallbackLoc.getWorld().dropItemNaturally(fallbackLoc.clone().add(0.5, 1, 0.5), item);
+            }
+        }
     }
 
 
@@ -117,7 +167,8 @@ public class ActiveStation {
     }
 
     public Station getStation() {
-        return station;
+        Station fresh = StationLoader.getByString(station.getId());
+        return fresh != null ? fresh : station;
     }
 
     public boolean hasBlueprint() {
@@ -146,6 +197,25 @@ public class ActiveStation {
 
     public void setSpawnLocation(Location loc) {
         spawnLoc = loc;
+    }
+
+    public void setCrafter(UUID uuid, HashMap<String, Integer> tools) {
+        this.crafterUUID = uuid;
+        this.pendingTools = new HashMap<>(tools);
+    }
+
+    public UUID getCrafterUUID() {
+        return crafterUUID;
+    }
+
+    public HashMap<String, Integer> getPendingTools() {
+        return pendingTools;
+    }
+
+    public void dropPendingTools(Location loc) {
+        returnTools(loc);
+        crafterUUID = null;
+        pendingTools.clear();
     }
 
     private void updateHologram() {

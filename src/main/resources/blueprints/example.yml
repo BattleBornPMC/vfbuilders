@@ -15,3 +15,11 @@
 #   inputs:
 #     - "minecraft:iron_ingot 10"
 #     - "minecraft:oak_planks 20"
+#   crafting-sound:                 # Optional: sound played periodically during crafting
+#     sound: BLOCK_ANVIL_USE        # Vanilla enum (BLOCK_ANVIL_USE) or namespaced key (minecraft:block.anvil.use)
+#     volume: 1.0
+#     pitch: 1.0
+#     interval: 20                  # How often to play, in seconds
+#   tools:                          # Optional: items taken at start and returned when vehicle is done
+#     - "minecraft:diamond_pickaxe 1"
+#     - "iaitem:my_custom_tool 1"

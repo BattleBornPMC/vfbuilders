@@ -37,12 +37,25 @@ public class InventoryManager {
 			String title = me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter.formatHex(s.getStation().getMenuTitle());
 			i = VFBuilders.plugin.getServer().createInventory(new VFBHolder(s, VFBGUI.CATEGORY), 27, title);
 		}
+		// First pass: place categories with explicit slots
+		for(BlueprintCategory cat : CategoryLoader.get().values()) {
+			if(!cat.getStation().equals(s.getStation())) continue;
+			if(cat.hasPermission() && !p.hasPermission(cat.getPermission())) continue;
+			if(cat.hasSlot()) {
+				i.setItem(cat.getSlot(), getCategoryItem(p, cat));
+			}
+		}
+		// Second pass: fill remaining categories sequentially into unoccupied slots
 		int x = 0;
 		for(BlueprintCategory cat : CategoryLoader.get().values()) {
-            if(!cat.getStation().equals(s.getStation())) continue;
+			if(!cat.getStation().equals(s.getStation())) continue;
 			if(cat.hasPermission() && !p.hasPermission(cat.getPermission())) continue;
-            i.setItem(x, getCategoryItem(p, cat));
-			x++;
+			if(cat.hasSlot()) continue;
+			while(x < i.getSize() && i.getItem(x) != null) x++;
+			if(x < i.getSize()) {
+				i.setItem(x, getCategoryItem(p, cat));
+				x++;
+			}
 		}
 		if(Cache.categoryMenuFillers) {
 			x = 0;
@@ -146,6 +159,16 @@ public class InventoryManager {
 			String name = StringFormatter.getVanillaName(input.getType());
 			if(input.getItemMeta().hasDisplayName()) name = input.getItemMeta().getDisplayName();
 			lore.add(StringFormatter.formatHex("#85817b- #c2b9ac"+name+"§e: #d7d964"+entry.getValue()));
+		}
+		if(b.hasTools()) {
+			lore.add(" ");
+			lore.add(StringFormatter.formatHex("#8fb6c2§lTools §7(returned):"));
+			for(Map.Entry<String, Integer> entry : b.getTools().entrySet()) {
+				ItemStack tool = creator.getItemFromPath(entry.getKey());
+				String name = StringFormatter.getVanillaName(tool.getType());
+				if(tool.getItemMeta().hasDisplayName()) name = tool.getItemMeta().getDisplayName();
+				lore.add(StringFormatter.formatHex("#85817b- #c2b9ac"+name+"§e: #d7d964"+entry.getValue()));
+			}
 		}
 		m.setLore(lore);
 		i.setItemMeta(m);

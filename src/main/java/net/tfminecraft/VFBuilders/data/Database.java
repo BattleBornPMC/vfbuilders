@@ -28,10 +28,12 @@ public class Database {
             station.removeHolograms();
             StationData data = new StationData();
             data.location = toSerializableLoc(station.getLocation());
-            data.stationId = station.getStation().getId(); // Save station identifier
+            data.stationId = station.getStation().getId();
             data.spawnLocation = station.hasSpawnLocation() ? toSerializableLoc(station.getSpawnLocation()) : null;
             data.blueprintId = station.hasBlueprint() ? station.getBlueprint().getId() : null;
             data.timeLeft = station.getTimeLeft();
+            data.crafterUUID = station.getCrafterUUID() != null ? station.getCrafterUUID().toString() : null;
+            data.pendingTools = station.getPendingTools().isEmpty() ? null : new java.util.HashMap<>(station.getPendingTools());
 
             dataList.add(data);
         }
@@ -64,6 +66,9 @@ public class Database {
                     data.timeLeft,
                     data.spawnLocation != null ? toBukkitLoc(data.spawnLocation) : null
                 );
+                if (data.crafterUUID != null && data.pendingTools != null && !data.pendingTools.isEmpty()) {
+                    station.setCrafter(UUID.fromString(data.crafterUUID), new java.util.HashMap<>(data.pendingTools));
+                }
 
                 loaded.put(loc, station);
             }
@@ -101,6 +106,8 @@ public class Database {
         String stationId;
         String blueprintId;
         int timeLeft;
+        String crafterUUID;
+        java.util.HashMap<String, Integer> pendingTools;
     }
 }
 
