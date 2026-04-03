@@ -24,4 +24,16 @@ public class Station {
     public String getMenuTitle() {
         return menuTitle;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Station)) return false;
+        return id.equals(((Station) o).id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
