@@ -4,3 +4,18 @@ construction-max-distance: 8
 
 # Whether to fill empty slots with gray glass in the category menu
 category-menu-fillers: false
+
+# Colors used in blueprint lore (hex or &-codes)
+lore-colors:
+  label: "#ccbf8f"        # "Seats", "Weapons", "Inputs" labels
+  value: "#86d672"        # Seat/weapon counts
+  header: "#66ad89"       # "Components" header
+  bullet: "#85817b"       # Bullet dash before component/input lines
+  item-name: "#c9a151"    # Component/weapon names
+  hp-label: "#5ad17e"     # "HP" text
+  hp-value: "#84d19b"     # HP numbers
+  time: "#b38372"         # "Time" label
+  time-value: "#8fb6c2"   # Time value
+  input-name: "#c2b9ac"   # Input/tool item names
+  input-amount: "#d7d964" # Input/tool amounts
+  tool-header: "#8fb6c2"  # "Tools (returned)" header

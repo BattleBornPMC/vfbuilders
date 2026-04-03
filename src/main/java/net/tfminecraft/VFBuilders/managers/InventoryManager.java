@@ -143,33 +143,39 @@ public class InventoryManager {
 		m.getPersistentDataContainer().set(key, PersistentDataType.STRING, b.getId());
 		List<String> lore = m.hasLore() ? new ArrayList<>(m.getLore()) : new ArrayList<>();
 		lore.add(" ");
-		lore.add(StringFormatter.formatHex("#ccbf8fSeats§e: #86d672"+v.getSeatHandler().getSeats().size()));
-		if(v.getWeapons().size() > 0) lore.add(StringFormatter.formatHex("#ccbf8fWeapons§e: #86d672"+v.getWeapons().size()));
+		lore.add(StringFormatter.formatHex(Cache.loreLabel+"Seats§e: "+Cache.loreValue+v.getSeatHandler().getSeats().size()));
+		if(v.getWeapons().size() > 0) lore.add(StringFormatter.formatHex(Cache.loreLabel+"Weapons§e: "+Cache.loreValue+v.getWeapons().size()));
 		lore.add(" ");
-		lore.add(StringFormatter.formatHex("#66ad89Components§e:"));
+		lore.add(StringFormatter.formatHex(Cache.loreHeader+"Components§e:"));
 		for(VehicleComponent c : v.getComponentHandler().getComponents()) {
-			lore.add(StringFormatter.formatHex("#85817b- #c9a151"+c.getAlias()+" §7(#5ad17eHP§e: #84d19b"+c.getHealthData().getHealth()+"§7)"));
+			lore.add(StringFormatter.formatHex(Cache.loreBullet+"- "+Cache.loreItemName+c.getAlias()+" §7("+Cache.loreHpLabel+"HP§e: "+Cache.loreHpValue+c.getHealthData().getHealth()+"§7)"));
 		}
 		for(Weapon w : v.getWeapons()) {
-			lore.add(StringFormatter.formatHex("#85817b- #c9a151"+w.getName()+" §7(#5ad17eHP§e: #84d19b"+w.getHealthData().getHealth()+"§7)"));
+			lore.add(StringFormatter.formatHex(Cache.loreBullet+"- "+Cache.loreItemName+w.getName()+" §7("+Cache.loreHpLabel+"HP§e: "+Cache.loreHpValue+w.getHealthData().getHealth()+"§7)"));
 		}
 		lore.add(" ");
-		lore.add(StringFormatter.formatHex("#b38372Time§e: #8fb6c2"+TimeFormatter.formatTime(b.getTime())));
-		lore.add(StringFormatter.formatHex("#ccbf8f§lInputs:"));
+		lore.add(StringFormatter.formatHex(Cache.loreTime+"Time§e: "+Cache.loreTimeValue+TimeFormatter.formatTime(b.getTime())));
+		lore.add(StringFormatter.formatHex(Cache.loreLabel+"§lInputs:"));
 		for(Map.Entry<String, Integer> entry : b.getInputs().entrySet()) {
-			ItemStack input = creator.getItemFromPath(entry.getKey());
-			String name = StringFormatter.getVanillaName(input.getType());
-			if(input.getItemMeta().hasDisplayName()) name = input.getItemMeta().getDisplayName();
-			lore.add(StringFormatter.formatHex("#85817b- #c2b9ac"+name+"§e: #d7d964"+entry.getValue()));
+			String name = entry.getKey();
+			try {
+				ItemStack input = creator.getItemFromPath(entry.getKey());
+				name = StringFormatter.getVanillaName(input.getType());
+				if(input.getItemMeta().hasDisplayName()) name = input.getItemMeta().getDisplayName();
+			} catch (Exception ignored) {}
+			lore.add(StringFormatter.formatHex(Cache.loreBullet+"- "+Cache.loreInputName+name+"§e: "+Cache.loreInputAmt+entry.getValue()));
 		}
 		if(b.hasTools()) {
 			lore.add(" ");
-			lore.add(StringFormatter.formatHex("#8fb6c2§lTools §7(returned):"));
+			lore.add(StringFormatter.formatHex(Cache.loreToolHeader+"§lTools §7(returned):"));
 			for(Map.Entry<String, Integer> entry : b.getTools().entrySet()) {
-				ItemStack tool = creator.getItemFromPath(entry.getKey());
-				String name = StringFormatter.getVanillaName(tool.getType());
-				if(tool.getItemMeta().hasDisplayName()) name = tool.getItemMeta().getDisplayName();
-				lore.add(StringFormatter.formatHex("#85817b- #c2b9ac"+name+"§e: #d7d964"+entry.getValue()));
+				String name = entry.getKey();
+				try {
+					ItemStack tool = creator.getItemFromPath(entry.getKey());
+					name = StringFormatter.getVanillaName(tool.getType());
+					if(tool.getItemMeta().hasDisplayName()) name = tool.getItemMeta().getDisplayName();
+				} catch (Exception ignored) {}
+				lore.add(StringFormatter.formatHex(Cache.loreBullet+"- "+Cache.loreInputName+name+"§e: "+Cache.loreInputAmt+entry.getValue()));
 			}
 		}
 		m.setLore(lore);

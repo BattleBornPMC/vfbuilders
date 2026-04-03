@@ -254,17 +254,21 @@ public class Blueprint {
 
         // Drop all items
         for (Map.Entry<String, Integer> entry : inputs.entrySet()) {
-            ItemStack drop = api.getCreator().getItemFromPath(entry.getKey());
-            drop.setAmount(entry.getValue());
-            loc.getWorld().dropItemNaturally(loc.clone().add(0.5, 1, 0.5), drop);
+            try {
+                ItemStack drop = api.getCreator().getItemFromPath(entry.getKey());
+                drop.setAmount(entry.getValue());
+                loc.getWorld().dropItemNaturally(loc.clone().add(0.5, 1, 0.5), drop);
+            } catch (Exception ignored) {}
         }
     }
 
     public void dropTools(Location loc) {
         for (Map.Entry<String, Integer> entry : tools.entrySet()) {
-            ItemStack drop = api.getCreator().getItemFromPath(entry.getKey());
-            drop.setAmount(entry.getValue());
-            loc.getWorld().dropItemNaturally(loc.clone().add(0.5, 1, 0.5), drop);
+            try {
+                ItemStack drop = api.getCreator().getItemFromPath(entry.getKey());
+                drop.setAmount(entry.getValue());
+                loc.getWorld().dropItemNaturally(loc.clone().add(0.5, 1, 0.5), drop);
+            } catch (Exception ignored) {}
         }
     }
 }
