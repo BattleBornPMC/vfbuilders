@@ -1,0 +1,7 @@
+# Define your build stations here.
+# The block value should be a valid ItemsAdder block identifier.
+#
+# Example:
+# my_station:
+#   block: "v.bedrock"
+#   menu-title: "&7Select Category"

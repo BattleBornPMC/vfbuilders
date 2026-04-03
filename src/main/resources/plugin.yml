@@ -1,0 +1,18 @@
+main: net.tfminecraft.VFBuilders.VFBuilders
+api-version: 1.20
+name: VFBuilders
+version: 1.1
+author: Drefvelin (full plugin), BattleBornPMC (configurable options and reload cmd)
+folia-supported: true
+
+depend: [TLibs, VehicleFramework]
+
+commands:
+  vfbuilders:
+    usage: /<command> [reload]
+    description: VFBuilders Command
+
+permissions:
+  vfbuilders.reload:
+    description: Allows reloading the VFBuilders configuration
+    default: op

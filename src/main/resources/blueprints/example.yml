@@ -1,0 +1,17 @@
+# Example blueprint file.
+# Multiple blueprints can be defined in a single file.
+# The blueprint ID (e.g. "example_vehicle") must be unique across all blueprint files.
+#
+# example_vehicle:
+#   category: "my_category"       # Must match a category ID in categories.yml
+#   vehicle: "my_vehicle"         # Must match a VehicleFramework vehicle ID
+#   time: 200                     # Construction time in ticks (20 ticks = 1 second)
+#   slot: 0                       # Optional: pin this blueprint to a specific slot (0-26)
+#   permission: "vfbuilders.blueprint.example_vehicle"  # Optional
+#   item:
+#     material: IRON_BLOCK
+#     display-name: "&fExample Vehicle"
+#     custom-model-data: 1234     # Optional
+#   inputs:
+#     - "minecraft:iron_ingot 10"
+#     - "minecraft:oak_planks 20"

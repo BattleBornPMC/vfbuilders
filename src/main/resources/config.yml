@@ -1,0 +1,6 @@
+max-exposure-points: 120
+
+construction-max-distance: 8
+
+# Whether to fill empty slots with gray glass in the category menu
+category-menu-fillers: false

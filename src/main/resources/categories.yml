@@ -1,0 +1,18 @@
+# Define your blueprint categories here.
+# Each category must reference a station defined in stations.yml.
+#
+# Example:
+# my_category:
+#   station: "my_station"
+#   menu-title: "&7Select Blueprint"
+#   menu-fillers: false
+#   permission: "vfbuilders.category.my_category"  # optional
+#   item:
+#     material: IRON_BLOCK
+#     display-name: "&fMy Category"
+#     custom-model-data: 1234    # optional
+#   back-button:                 # optional — defaults to a red BARRIER in slot 26 named "BACK"
+#     material: BARRIER
+#     display-name: "&cBack"
+#     slot: 26                   # optional, default 26
+#     custom-model-data: 1234    # optional
