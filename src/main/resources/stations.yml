@@ -1,7 +1,17 @@
 # Define your build stations here.
-# The block value should be a valid ItemsAdder block identifier.
 #
-# Example:
+# The "block" value identifies the block or furniture piece that acts as the station.
+# Supported formats:
+#   ItemsAdder furniture/block:  "iaitem:my_station_block"   (requires ItemsAdder)
+#   Nexo furniture/block:        "nexo:my_station_furniture"  (requires Nexo)
+#   Vanilla block:               "STONE" / "v.bedrock" / etc. (via TLibs)
+#
+# Example using ItemsAdder:
 # my_station:
-#   block: "v.bedrock"
+#   block: "iaitem:my_station_block"
+#   menu-title: "&7Select Category"
+#
+# Example using Nexo:
+# my_station:
+#   block: "nexo:my_station_furniture"
 #   menu-title: "&7Select Category"

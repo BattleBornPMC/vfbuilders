@@ -2,6 +2,11 @@
 # Multiple blueprints can be defined in a single file.
 # The blueprint ID (e.g. "example_vehicle") must be unique across all blueprint files.
 #
+# Item/block path formats for inputs and tools:
+#   Vanilla:      "minecraft:iron_ingot 10"  or  "IRON_INGOT 10"
+#   ItemsAdder:   "iaitem:my_custom_item 5"      (requires ItemsAdder)
+#   Nexo:         "nexo:my_nexo_item 5"           (requires Nexo)
+#
 # example_vehicle:
 #   category: "my_category"       # Must match a category ID in categories.yml
 #   vehicle: "my_vehicle"         # Must match a VehicleFramework vehicle ID
@@ -15,11 +20,13 @@
 #   inputs:
 #     - "minecraft:iron_ingot 10"
 #     - "minecraft:oak_planks 20"
-#   crafting-sound:                 # Optional: sound played periodically during crafting
-#     sound: BLOCK_ANVIL_USE        # Vanilla enum (BLOCK_ANVIL_USE) or namespaced key (minecraft:block.anvil.use)
+#     - "nexo:my_nexo_item 5"     # Nexo item example
+#   crafting-sound:               # Optional: sound played periodically during crafting
+#     sound: BLOCK_ANVIL_USE      # Vanilla enum or namespaced key (minecraft:block.anvil.use)
 #     volume: 1.0
 #     pitch: 1.0
-#     interval: 20                  # How often to play, in seconds
-#   tools:                          # Optional: items taken at start and returned when vehicle is done
+#     interval: 20                # How often to play, in seconds
+#   tools:                        # Optional: items taken at start and returned when vehicle is done
 #     - "minecraft:diamond_pickaxe 1"
 #     - "iaitem:my_custom_tool 1"
+#     - "nexo:my_nexo_tool 1"     # Nexo tool example

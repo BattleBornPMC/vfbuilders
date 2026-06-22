@@ -16,10 +16,8 @@ import org.bukkit.persistence.PersistentDataType;
 
 import org.bukkit.ChatColor;
 
-import me.Plugins.TLibs.TLibs;
-import me.Plugins.TLibs.Objects.TLibAPI;
-import me.Plugins.TLibs.Objects.API.SubAPI.ItemCreator;
 import me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter;
+import net.tfminecraft.VFBuilders.util.ItemHelper;
 import me.Plugins.TLibs.Utils.TimeFormatter;
 import net.tfminecraft.VFBuilders.Cache;
 import net.tfminecraft.VFBuilders.VFBuilders;
@@ -134,7 +132,6 @@ public class InventoryManager {
 	}
 
 	private ItemStack getBlueprintItem(Blueprint b) {
-		ItemCreator creator = TLibs.getItemAPI().getCreator();
 		ItemStack i = new ItemStack(b.getItem());
 		ItemMeta m = i.getItemMeta();
 		Vehicle v = b.getVehicle();
@@ -159,9 +156,11 @@ public class InventoryManager {
 		for(Map.Entry<String, Integer> entry : b.getInputs().entrySet()) {
 			String name = entry.getKey();
 			try {
-				ItemStack input = creator.getItemFromPath(entry.getKey());
-				name = StringFormatter.getVanillaName(input.getType());
-				if(input.getItemMeta().hasDisplayName()) name = input.getItemMeta().getDisplayName();
+				ItemStack input = ItemHelper.fromPath(entry.getKey());
+				if (input != null) {
+					name = StringFormatter.getVanillaName(input.getType());
+					if(input.getItemMeta().hasDisplayName()) name = input.getItemMeta().getDisplayName();
+				}
 			} catch (Exception ignored) {}
 			lore.add(StringFormatter.formatHex(Cache.loreBullet+"- "+Cache.loreInputName+name+"§e: "+Cache.loreInputAmt+entry.getValue()));
 		}
@@ -171,9 +170,11 @@ public class InventoryManager {
 			for(Map.Entry<String, Integer> entry : b.getTools().entrySet()) {
 				String name = entry.getKey();
 				try {
-					ItemStack tool = creator.getItemFromPath(entry.getKey());
-					name = StringFormatter.getVanillaName(tool.getType());
-					if(tool.getItemMeta().hasDisplayName()) name = tool.getItemMeta().getDisplayName();
+					ItemStack tool = ItemHelper.fromPath(entry.getKey());
+					if (tool != null) {
+						name = StringFormatter.getVanillaName(tool.getType());
+						if(tool.getItemMeta().hasDisplayName()) name = tool.getItemMeta().getDisplayName();
+					}
 				} catch (Exception ignored) {}
 				lore.add(StringFormatter.formatHex(Cache.loreBullet+"- "+Cache.loreInputName+name+"§e: "+Cache.loreInputAmt+entry.getValue()));
 			}

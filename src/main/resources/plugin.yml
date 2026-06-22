@@ -6,6 +6,7 @@ author: Drefvelin (full plugin), BattleBornPMC (configurable options and reload 
 folia-supported: true
 
 depend: [TLibs, VehicleFramework]
+softdepend: [ItemsAdder, Nexo]
 
 commands:
   vfbuilders:
